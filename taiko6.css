@@ -1,0 +1,11 @@
+*{
+    font-size:120%;
+    font-family: 'MS Gothic';
+    user-select: none;
+    box-sizing: border-box;
+}
+#screen{
+    border: solid 4px black;
+    background-color: darkslategray;
+}
+
