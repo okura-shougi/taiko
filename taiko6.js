@@ -32,9 +32,10 @@ var settingNotePosition = 1000;
 var noteClass = /** @class */ (function () {
     function noteClass(noteType, position) {
         var _this = this;
-        this.loadThisNote = function () {
+        this.loadThisNote = function (param) {
             // srcの前にplayしたら動くってマジ？
-            setTimeout(_this._audioElement.play,100);
+            setTimeout(_this._audioElement.play, param * 100);
+            _this._audioElement.play();
             switch (_this._noteType) {
                 case '1':
                     _this._imageElement.src = "赤玉.png";
@@ -94,7 +95,7 @@ for (var i = 0; i < chart.length; i++) {
 // ノーツ読み込み
 start.addEventListener('click', function (e) {
     for (var i = 0; i < note.length; i++) {
-        note[i].loadThisNote();
+        note[i].loadThisNote(i);
     }
 });
 // クリックするとノーツが動き出す
