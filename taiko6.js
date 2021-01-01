@@ -50,6 +50,7 @@ var noteClass = /** @class */ (function () {
         this._isAttacked = false;
         this._imageElement = new Image();
         this._audioElement = new Audio();
+        this._audioElement.play();
         switch (this._noteType) {
             case '1':
                 this._imageElement.src = "赤玉.png";
