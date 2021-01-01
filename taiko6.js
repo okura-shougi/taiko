@@ -89,9 +89,9 @@ screenCanvas.addEventListener('click', function (e) {
     setInterval(movePosition, updateTime);
 });
 // スマホ用
-screenCanvas.addEventListener('touchstart', function (e) {
-    setInterval(movePosition, updateTime);
-});
+// screenCanvas.addEventListener('touchstart', function (e) {
+//     setInterval(movePosition, updateTime);
+// });
 // ノーツ移動のループ（setInterval）
 var movePosition = function () {
     for (var i = 0; i < note.length; i++) {
