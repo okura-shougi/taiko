@@ -10,6 +10,8 @@ var canvasHeight = screenCanvas.getAttribute('height');
 // test
 var test = document.getElementById('test');
 var test2 = document.getElementById('test2');
+// start
+var start = document.getElementById("start");
 // 曲のBPM
 var BPM = 200;
 // 曲の譜面
@@ -30,6 +32,30 @@ var settingNotePosition = 1000;
 var noteClass = /** @class */ (function () {
     function noteClass(noteType, position) {
         var _this = this;
+        this.loadThisNote = function () {
+            // srcの前にplayしたら動くってマジ？
+            setTimeout(_this._audioElement.play,100);
+            switch (_this._noteType) {
+                case '1':
+                    _this._imageElement.src = "赤玉.png";
+                    _this._audioElement.src = "赤玉.mp3";
+                    // 音量を小さくする
+                    _this._audioElement.volume -= 0.5;
+                    _this._size = { x: 50, y: 50 };
+                    break;
+                case '2':
+                    _this._imageElement.src = "青玉.png";
+                    _this._audioElement.src = "青玉.mp3";
+                    //　再生位置を後ろにする
+                    _this._audioElement.currentTime = 0.2;
+                    _this._size = { x: 50, y: 50 };
+                    break;
+                default:
+                    _this._imageElement.src = "no_image_logo.png";
+                    _this._size = { x: 76, y: 49 };
+                    break;
+            }
+        };
         this.moveThisPosition = function () {
             //  96分音符の間隔で移動する
             _this._position -= interval48Length / 2;
@@ -47,30 +73,10 @@ var noteClass = /** @class */ (function () {
         };
         this._noteType = noteType;
         this._position = position;
+        this._size = { x: 0, y: 0 };
         this._isAttacked = false;
         this._imageElement = new Image();
         this._audioElement = new Audio();
-        this._audioElement.play();
-        switch (this._noteType) {
-            case '1':
-                this._imageElement.src = "赤玉.png";
-                this._audioElement.src = "赤玉.mp3";
-                // 音量を小さくする
-                this._audioElement.volume -= 0.5;
-                this._size = { x: 50, y: 50 };
-                break;
-            case '2':
-                this._imageElement.src = "青玉.png";
-                this._audioElement.src = "青玉.mp3";
-                //　再生位置を後ろにする
-                this._audioElement.currentTime = 0.2;
-                this._size = { x: 50, y: 50 };
-                break;
-            default:
-                this._imageElement.src = "no_image_logo.png";
-                this._size = { x: 76, y: 49 };
-                break;
-        }
     }
     return noteClass;
 }());
@@ -85,14 +91,16 @@ for (var i = 0; i < chart.length; i++) {
         settingNotePosition += Math.floor(48 / chart[i].length * interval48Length);
     }
 }
+// ノーツ読み込み
+start.addEventListener('click', function (e) {
+    for (var i = 0; i < note.length; i++) {
+        note[i].loadThisNote();
+    }
+});
 // クリックするとノーツが動き出す
 screenCanvas.addEventListener('click', function (e) {
     setInterval(movePosition, updateTime);
 });
-// スマホ用
-// screenCanvas.addEventListener('touchstart', function (e) {
-//     setInterval(movePosition, updateTime);
-// });
 // ノーツ移動のループ（setInterval）
 var movePosition = function () {
     for (var i = 0; i < note.length; i++) {
