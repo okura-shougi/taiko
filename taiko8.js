@@ -1,4 +1,3 @@
-"use strict";
 // screenの属性を受け取る
 const screenCanvas = document.getElementById('screen');
 // 2dコンテキスト
@@ -26,9 +25,9 @@ const interval48Length = 12;
 // これから配置するノーツのx座標（ピクセル）
 let settingNotePosition = 1000;
 // 描写範囲内にある最初のノーツ
-let firstNoteSubscript = 0;
+let firstNoteIndex = 0;
 // 描写範囲内にある最後のノーツ
-let lastNoteSubscript = 0;
+let lastNoteIndex = 0;
 //--- 画像 ---//
 const imageElement = [
     new Image(), new Image(), new Image()
@@ -39,12 +38,8 @@ imageElement[2].src = "青玉.png";
 // 効果音を複数用意して、同時に再生できるようにしておく
 const audioElement1 = new Array(20).fill(new Audio());
 const audioElement2 = new Array(20).fill(new Audio());
-// audioElement[1] = <HTMLAudioElement>document.getElementById('don');
-// audioElement[2] = <HTMLAudioElement>document.getElementById('katu');
-// audioElement[1].src = "赤玉.mp3";
-// audioElement[2].src = "青玉.mp3";
-let audioElement1Subscript = 0;
-let audioElement2Subscript = 0;
+let audioElement1Index = 0;
+let audioElement2Index = 0;
 //////////////////////
 // ---noteClass--- //
 //////////////////////
@@ -96,13 +91,13 @@ screenCanvas.addEventListener('click', e => {
 // ノーツ移動のループ（setInterval）
 let movePosition = () => {
     // 全てのノーツが左に移動する
-    for (let i = firstNoteSubscript; i < note.length; i++) {
+    for (let i = firstNoteIndex; i < note.length; i++) {
         note[i].moveThisPosition();
     }
     // 描写範囲内に入ったノーツがあるか調べる
-    for (let i = lastNoteSubscript; i < note.length; i++) {
+    for (let i = lastNoteIndex; i < note.length; i++) {
         if (note[i].position <= 1800) {
-            lastNoteSubscript = i;
+            lastNoteIndex = i;
         }
         else
             break;
@@ -117,51 +112,42 @@ let drawAllImage = () => {
     // Canvasをクリアする
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     // 判定円を描写する
+    ctx.beginPath();
     ctx.strokeStyle = "rgba(255,255,255, 0.9)";
     ctx.arc(50, noteHeight + 25, 25, 0, Math.PI * 2, true);
     ctx.stroke();
     // 配列の末尾から画像を描写する
-    for (let i = lastNoteSubscript; i >= firstNoteSubscript; i--) {
-        ctx.drawImage(imageElement[note[i].noteType], note[i].position, noteHeight, 50, 50);
+    for (let i = lastNoteIndex; i >= firstNoteIndex; i--) {
+        ctx.beginPath();
+        ctx.arc(note[i].position, noteHeight + 20, 20, // 半径
+        0, Math.PI * 2, false);
+        if (note[i].noteType == 1)
+            ctx.fillStyle = 'red';
+        if (note[i].noteType == 2)
+            ctx.fillStyle = 'blue';
+        ctx.fill();
     }
 };
 // ノーツを叩く
 let attackNote = () => {
-    if (note[firstNoteSubscript].position <= 50) {
-        // switch文が通らない、数値は無理なのか？？
-        // 違う、わけわからんけどnoteTypeが全角数字になっている、わけわからんけど
-        if (note[firstNoteSubscript].noteType == 1) {
-            audioElement1[audioElement1Subscript].currentTime = 0;
-            audioElement1[audioElement1Subscript].play();
-            test.insertAdjacentText("beforeend", audioElement1Subscript + " ");
-            audioElement1Subscript++;
-            if (audioElement1Subscript === audioElement1.length)
-                audioElement1Subscript = 0;
+    if (note[firstNoteIndex].position <= 50) {
+        if (note[firstNoteIndex].noteType == 1) {
+            audioElement1[audioElement1Index].currentTime = 0;
+            audioElement1[audioElement1Index].play();
+            test.insertAdjacentText("beforeend", '1 ');
+            audioElement1Index++;
+            if (audioElement1Index === audioElement1.length)
+                audioElement1Index = 0;
         }
-        if (note[firstNoteSubscript].noteType == 2) {
-            audioElement2[audioElement2Subscript].currentTime = 0.2;
-            audioElement2[audioElement2Subscript].play();
-            test.insertAdjacentText("beforeend", audioElement2Subscript + " ");
-            audioElement2Subscript++;
-            if (audioElement2Subscript === audioElement2.length)
-                audioElement2Subscript = 0;
+        if (note[firstNoteIndex].noteType == 2) {
+            audioElement2[audioElement2Index].currentTime = 0.2;
+            audioElement2[audioElement2Index].play();
+            test.insertAdjacentText("beforeend", '2 ');
+            audioElement2Index++;
+            if (audioElement2Index === audioElement2.length)
+                audioElement2Index = 0;
         }
-        // switch(note[firstNoteSubscript].noteType){
-        //     case 1:
-        //         audioElement1[audioElement1Subscript].play();
-        //         audioElement1Subscript++;
-        //         if(audioElement1Subscript > 2) audioElement1Subscript = 0;
-        //         break;
-        //     case 2:
-        //         audioElement2[audioElement2Subscript].play();
-        //         audioElement2Subscript++;
-        //         if(audioElement2Subscript > 2) audioElement2Subscript = 0;
-        //         break;
-        //     default:
-        //         test.innerText = "unko";
-        //         break;
-        // }
-        firstNoteSubscript++;
+        firstNoteIndex++;
     }
 };
 export {};
